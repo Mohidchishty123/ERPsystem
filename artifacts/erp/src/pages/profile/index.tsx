@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -127,10 +128,10 @@ export default function Profile() {
                       </FormItem>
                     )}
                   />
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Email</Label>
                     <Input value={me?.email || ""} disabled className="bg-muted" />
-                  </FormItem>
+                  </div>
                   <FormField
                     control={profileForm.control}
                     name="phone"
