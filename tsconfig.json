@@ -1,16 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES2020",
+    "module": "CommonJS",
     "moduleResolution": "node",
-    "lib": ["ESNext"],
-    "strict": true,
     "esModuleInterop": true,
+    "strict": false,
+    "noImplicitAny": false,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
     "rootDir": "src",
-    "allowImportingTsExtensions": false,
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"]
