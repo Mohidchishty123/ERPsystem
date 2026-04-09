@@ -18,6 +18,6 @@ export const payrollRecordsTable = pgTable("payroll_records", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-export const insertPayrollRecordSchema = createInsertSchema(payrollRecordsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertPayrollRecordSchema = createInsertSchema(payrollRecordsTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertPayrollRecord = z.infer<typeof insertPayrollRecordSchema>;
 export type PayrollRecord = typeof payrollRecordsTable.$inferSelect;

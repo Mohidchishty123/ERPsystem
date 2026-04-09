@@ -37,14 +37,14 @@ export const taskCommentsTable = pgTable("task_comments", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const insertProjectSchema = createInsertSchema(projectsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertProjectSchema = createInsertSchema(projectsTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type Project = typeof projectsTable.$inferSelect;
 
-export const insertTaskSchema = createInsertSchema(tasksTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertTaskSchema = createInsertSchema(tasksTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type Task = typeof tasksTable.$inferSelect;
 
-export const insertTaskCommentSchema = createInsertSchema(taskCommentsTable).omit({ id: true, createdAt: true });
+export const insertTaskCommentSchema = createInsertSchema(taskCommentsTable).omit({ id: true, createdAt: true } as any);
 export type InsertTaskComment = z.infer<typeof insertTaskCommentSchema>;
 export type TaskComment = typeof taskCommentsTable.$inferSelect;

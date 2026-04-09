@@ -16,6 +16,6 @@ export const requestsTable = pgTable("requests", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-export const insertRequestSchema = createInsertSchema(requestsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertRequestSchema = createInsertSchema(requestsTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertRequest = z.infer<typeof insertRequestSchema>;
 export type Request = typeof requestsTable.$inferSelect;

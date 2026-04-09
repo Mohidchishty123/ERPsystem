@@ -24,6 +24,6 @@ export const auditLogsTable = pgTable("audit_logs", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const insertAuditLogSchema = createInsertSchema(auditLogsTable).omit({ id: true, createdAt: true });
+export const insertAuditLogSchema = createInsertSchema(auditLogsTable).omit({ id: true, createdAt: true } as any);
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
 export type AuditLog = typeof auditLogsTable.$inferSelect;

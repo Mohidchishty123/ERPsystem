@@ -9,12 +9,7 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 if (!process.env["VERCEL"]) {
-  app.listen(port, (err: any) => {
-    if (err) {
-      logger.error({ err }, "Error listening on port");
-      process.exit(1);
-    }
-
+  app.listen(port, () => {
     logger.info({ port }, "Server listening");
   });
 }

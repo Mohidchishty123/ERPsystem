@@ -11,6 +11,6 @@ export const departmentsTable = pgTable("departments", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-export const insertDepartmentSchema = createInsertSchema(departmentsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDepartmentSchema = createInsertSchema(departmentsTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertDepartment = z.infer<typeof insertDepartmentSchema>;
 export type Department = typeof departmentsTable.$inferSelect;

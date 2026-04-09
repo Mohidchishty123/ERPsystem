@@ -29,10 +29,10 @@ export const leaveBalancesTable = pgTable("leave_balances", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-export const insertLeaveApplicationSchema = createInsertSchema(leaveApplicationsTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertLeaveApplicationSchema = createInsertSchema(leaveApplicationsTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertLeaveApplication = z.infer<typeof insertLeaveApplicationSchema>;
 export type LeaveApplication = typeof leaveApplicationsTable.$inferSelect;
 
-export const insertLeaveBalanceSchema = createInsertSchema(leaveBalancesTable).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertLeaveBalanceSchema = createInsertSchema(leaveBalancesTable).omit({ id: true, createdAt: true, updatedAt: true } as any);
 export type InsertLeaveBalance = z.infer<typeof insertLeaveBalanceSchema>;
 export type LeaveBalance = typeof leaveBalancesTable.$inferSelect;
