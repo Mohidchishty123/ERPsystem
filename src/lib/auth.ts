@@ -34,7 +34,7 @@ export function verifyToken(token: string): AuthPayload {
   return jwt.verify(token, JWT_SECRET) as AuthPayload;
 }
 
-export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function requireAuth(req: any, res: any, next: any): Promise<void> {
   const authHeader = req.headers["authorization"];
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ error: "Unauthorized" });
@@ -63,7 +63,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 }
 
 export function requireRole(...roles: string[]) {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return (req: any, res: any, next: any): void => {
     if (!req.user || !roles.includes(req.user.role)) {
       res.status(403).json({ error: "Forbidden" });
       return;
