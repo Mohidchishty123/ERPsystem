@@ -29,6 +29,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (_req, res) => {
+  res.json({ status: "ok", message: "ERP Backend API is running", docs: "/api/healthz" });
+});
+
 app.use("/api", router);
 
 export default app;
