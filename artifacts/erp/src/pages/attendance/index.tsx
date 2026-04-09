@@ -40,10 +40,6 @@ export default function Attendance() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Attendance Records</h1>
-        <Button variant="outline">
-          <Download className="h-4 w-4 mr-2" />
-          Export
-        </Button>
       </div>
 
       <Card>

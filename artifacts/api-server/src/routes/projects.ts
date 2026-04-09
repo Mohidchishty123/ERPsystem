@@ -63,8 +63,15 @@ async function formatTask(t: typeof tasksTable.$inferSelect) {
 // Projects
 router.get("/projects", requireAuth, async (req, res): Promise<void> => {
   const { departmentId, status } = req.query as Record<string, string | undefined>;
+  const user = req.user!;
   let projects = await db.select().from(projectsTable);
-  if (departmentId) projects = projects.filter((p) => p.departmentId === parseInt(departmentId, 10));
+
+  if (user.role === "admin" && user.departmentId) {
+    projects = projects.filter((p) => p.departmentId === user.departmentId);
+  } else if (departmentId) {
+    projects = projects.filter((p) => p.departmentId === parseInt(departmentId, 10));
+  }
+
   if (status) projects = projects.filter((p) => p.status === status);
   projects.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   const formatted = await Promise.all(projects.map(formatProject));

@@ -57,7 +57,7 @@ export default function Login() {
           <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 mb-4">
             <Shield className="h-10 w-10 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight uppercase text-primary">CoreHR</h1>
+          <h1 className="text-4xl font-bold tracking-tight uppercase text-primary">Nextstac</h1>
           <p className="text-muted-foreground mt-2 font-mono text-sm tracking-wider uppercase">Enterprise Resource Planning</p>
         </div>
         
@@ -78,7 +78,7 @@ export default function Login() {
                     <FormItem>
                       <FormLabel className="uppercase text-xs font-mono">Email Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="admin@corehr.app" {...field} className="bg-background" />
+                        <Input placeholder="admin@nextstac.app" {...field} className="bg-background" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -40,10 +40,10 @@ router.get("/requests", requireAuth, async (req, res): Promise<void> => {
 
   if (user.role === "employee") {
     reqs = reqs.filter((r) => r.userId === user.id);
-  } else if (userId) {
-    reqs = reqs.filter((r) => r.userId === parseInt(userId, 10));
   } else if (user.role === "admin" && user.departmentId) {
     reqs = reqs.filter((r) => r.departmentId === user.departmentId);
+  } else if (userId) {
+    reqs = reqs.filter((r) => r.userId === parseInt(userId, 10));
   }
 
   if (departmentId) reqs = reqs.filter((r) => r.departmentId === parseInt(departmentId, 10));

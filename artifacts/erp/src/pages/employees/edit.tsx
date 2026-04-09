@@ -20,7 +20,7 @@ const updateUserSchema = z.object({
   departmentId: z.coerce.number().optional().nullable(),
   position: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
-  employmentStatus: z.enum(["invited", "active", "inactive"]),
+  employmentStatus: z.enum(["active", "inactive"]),
 });
 
 export default function EditEmployee() {
@@ -64,8 +64,8 @@ export default function EditEmployee() {
         queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
         setLocation(`/employees/${userId}`);
       },
-      onError: (error) => {
-        toast({ title: "Failed to update", description: error.data?.error, variant: "destructive" });
+      onError: (error: any) => {
+        toast({ title: "Failed to update", description: error.data?.error || "Unknown error", variant: "destructive" });
       }
     }
   });
@@ -119,31 +119,33 @@ export default function EditEmployee() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="departmentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Department</FormLabel>
-                      <Select 
-                        onValueChange={(v) => field.onChange(v ? parseInt(v) : undefined)} 
-                        value={field.value?.toString() || ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {departments?.map(d => (
-                            <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {user.role !== "super_admin" && (
+                  <FormField
+                    control={form.control}
+                    name="departmentId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Department <span className="text-destructive">*</span></FormLabel>
+                        <Select 
+                          onValueChange={(v) => field.onChange(v ? parseInt(v) : undefined)} 
+                          value={field.value?.toString() || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select department" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {departments?.map(d => (
+                              <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
@@ -186,7 +188,6 @@ export default function EditEmployee() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="invited">Invited</SelectItem>
                           <SelectItem value="active">Active</SelectItem>
                           <SelectItem value="inactive">Inactive</SelectItem>
                         </SelectContent>

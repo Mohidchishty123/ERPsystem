@@ -50,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="flex h-screen w-full overflow-hidden bg-background">
         <Sidebar className="border-r border-border">
           <SidebarHeader className="border-b border-border py-4 px-6 flex items-center justify-center">
-            <h2 className="text-xl font-bold tracking-tight text-primary uppercase">CoreHR</h2>
+            <h2 className="text-xl font-bold tracking-tight text-primary uppercase">Nextstac</h2>
           </SidebarHeader>
           <SidebarContent className="flex-1 overflow-y-auto p-4 custom-scrollbar">
             <SidebarGroup>

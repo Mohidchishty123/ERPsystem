@@ -13,7 +13,7 @@ export const usersTable = pgTable("users", {
   phone: text("phone"),
   emergencyContact: text("emergency_contact"),
   avatarUrl: text("avatar_url"),
-  employmentStatus: text("employment_status").notNull().default("active"), // invited | active | inactive
+  employmentStatus: text("employment_status").notNull().default("active"), // active | inactive
   joinDate: text("join_date"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

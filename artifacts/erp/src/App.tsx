@@ -53,7 +53,7 @@ function ProtectedRoute({ component: Component, ...rest }: any) {
   if (isLoading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-background">
-        <div className="text-primary font-mono text-sm tracking-widest uppercase">Initializing CoreHR...</div>
+        <div className="text-primary font-mono text-sm tracking-widest uppercase">Initializing Nextstac...</div>
       </div>
     );
   }

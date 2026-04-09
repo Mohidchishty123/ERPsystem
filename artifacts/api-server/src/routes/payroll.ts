@@ -58,6 +58,10 @@ router.get("/payroll/summary", requireAuth, requireRole("super_admin", "admin"),
   for (const r of records) {
     const user = userMap.get(r.userId);
     if (!user?.departmentId) continue;
+    
+    // Admin filtering
+    if (req.user!.role === "admin" && user.departmentId !== req.user!.departmentId) continue;
+    
     const dept = deptMap.get(user.departmentId);
     if (!dept) continue;
     const existing = summaryMap.get(dept.id) ?? { departmentId: dept.id, departmentName: dept.name, totalNetSalary: 0, employeeCount: 0, approvedCount: 0, pendingCount: 0 };
@@ -79,11 +83,13 @@ router.get("/payroll", requireAuth, async (req, res): Promise<void> => {
 
   if (user.role === "employee") {
     records = records.filter((r) => r.userId === user.id);
+  } else if (user.role === "admin" && user.departmentId) {
+    const deptUsers = await db.select().from(usersTable).where(eq(usersTable.departmentId, user.departmentId));
+    const deptUserIds = new Set(deptUsers.map((u) => u.id));
+    records = records.filter((r) => deptUserIds.has(r.userId));
   } else if (userId) {
     records = records.filter((r) => r.userId === parseInt(userId, 10));
-  }
-
-  if (departmentId) {
+  } else if (departmentId) {
     const deptUsers = await db.select().from(usersTable).where(eq(usersTable.departmentId, parseInt(departmentId, 10)));
     const deptUserIds = new Set(deptUsers.map((u) => u.id));
     records = records.filter((r) => deptUserIds.has(r.userId));

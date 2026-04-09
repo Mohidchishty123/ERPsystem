@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, attendanceTable, usersTable, companySettingsTable } from "@workspace/db";
+import { db, attendanceTable, usersTable, companySettingsTable, departmentsTable } from "@workspace/db";
 import { eq, and, gte, lte, between } from "drizzle-orm";
 import { requireAuth, requireRole } from "../lib/auth";
 
@@ -95,7 +95,11 @@ router.get("/attendance/summary", requireAuth, requireRole("super_admin", "admin
   const y = parseInt(year, 10);
 
   let users = await db.select().from(usersTable).where(eq(usersTable.employmentStatus, "active"));
-  if (departmentId) {
+  const user = req.user!;
+  
+  if (user.role === "admin" && user.departmentId) {
+    users = users.filter((u) => u.departmentId === user.departmentId);
+  } else if (departmentId) {
     users = users.filter((u) => u.departmentId === parseInt(departmentId, 10));
   }
 
@@ -139,12 +143,16 @@ router.get("/attendance", requireAuth, async (req, res): Promise<void> => {
 
   let records = await db.select().from(attendanceTable);
 
-  // Employees can only see their own
+  // Access control
   if (user.role === "employee") {
     records = records.filter((r) => r.userId === user.id);
+  } else if (user.role === "admin" && user.departmentId) {
+    const deptUsers = await db.select().from(usersTable).where(eq(usersTable.departmentId, user.departmentId));
+    const deptUserIds = new Set(deptUsers.map((u) => u.id));
+    records = records.filter((r) => deptUserIds.has(r.userId));
   } else if (userId) {
     records = records.filter((r) => r.userId === parseInt(userId, 10));
-  } else if (departmentId && user.role === "admin") {
+  } else if (departmentId) {
     const deptUsers = await db.select().from(usersTable).where(eq(usersTable.departmentId, parseInt(departmentId, 10)));
     const deptUserIds = new Set(deptUsers.map((u) => u.id));
     records = records.filter((r) => deptUserIds.has(r.userId));

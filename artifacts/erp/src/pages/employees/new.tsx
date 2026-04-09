@@ -130,7 +130,15 @@ export default function AddEmployee() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select 
+                        onValueChange={(val) => {
+                          field.onChange(val);
+                          if (val === "super_admin") {
+                            form.setValue("departmentId", null);
+                          }
+                        }} 
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a role" />
@@ -146,31 +154,33 @@ export default function AddEmployee() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="departmentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Department</FormLabel>
-                      <Select 
-                        onValueChange={(v) => field.onChange(v ? parseInt(v) : undefined)} 
-                        value={field.value?.toString() || ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {departments?.map(d => (
-                            <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {form.watch("role") !== "super_admin" && (
+                  <FormField
+                    control={form.control}
+                    name="departmentId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Department <span className="text-destructive">*</span></FormLabel>
+                        <Select 
+                          onValueChange={(v) => field.onChange(v ? parseInt(v) : undefined)} 
+                          value={field.value?.toString() || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select department" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {departments?.map(d => (
+                              <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
                   name="position"

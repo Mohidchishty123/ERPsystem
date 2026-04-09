@@ -12,40 +12,50 @@ router.get("/reports/dashboard", requireAuth, async (req, res): Promise<void> =>
   const user = req.user!;
   const today = new Date().toISOString().slice(0, 10);
 
-  const allUsers = await db.select().from(usersTable).where(eq(usersTable.employmentStatus, "active"));
-  const todayAttendance = await db.select().from(attendanceTable).where(eq(attendanceTable.date, today));
+  let allUsers = await db.select().from(usersTable).where(eq(usersTable.employmentStatus, "active"));
+  let todayAttendance = await db.select().from(attendanceTable).where(eq(attendanceTable.date, today));
+  let onLeaveToday = await db.select().from(leaveApplicationsTable);
+  let allComplaints = await db.select().from(complaintsTable);
+  let allRequests = await db.select().from(requestsTable);
+  let allTasks = await db.select().from(tasksTable);
+  let allPayroll = await db.select().from(payrollRecordsTable);
+
+  if (user.role === "admin" && user.departmentId) {
+    allUsers = allUsers.filter((u) => u.departmentId === user.departmentId);
+    const deptUserIds = new Set(allUsers.map((u) => u.id));
+    todayAttendance = todayAttendance.filter((a) => deptUserIds.has(a.userId));
+    onLeaveToday = onLeaveToday.filter((l) => l.departmentId === user.departmentId);
+    allComplaints = allComplaints.filter((c) => c.departmentId === user.departmentId);
+    allRequests = allRequests.filter((r) => r.departmentId === user.departmentId);
+    allTasks = allTasks.filter((t) => {
+      // For tasks, we might need a more complex check if tasks don't have departmentId directly, 
+      // but usually they belong to projects which have departmentId.
+      // However, for simplicity and safety, we filter by assigned users if needed, 
+      // or assume projects are already filtered.
+      return true; // Wait, let's look at the tasksTable schema later or use deptUserIds.
+    });
+    // For tasks, let's filter by assignedTo being a dept member
+    allTasks = allTasks.filter((t) => t.assignedTo && deptUserIds.has(t.assignedTo));
+    allPayroll = allPayroll.filter((p) => deptUserIds.has(p.userId));
+  }
+
   const presentToday = user.role === "employee"
     ? todayAttendance.filter((a) => a.userId === user.id).length
     : todayAttendance.length;
 
-  const onLeaveToday = await db.select().from(leaveApplicationsTable);
   const onLeaveTodayCount = onLeaveToday.filter((l) => l.status === "approved" && l.startDate <= today && l.endDate >= today).length;
+  const pendingLeaveCount = onLeaveToday.filter((l) => l.status === "pending").length;
+  const pendingComplaintsCount = allComplaints.filter((c) => c.status === "submitted" || c.status === "under_review").length;
+  const pendingRequestsCount = allRequests.filter((r) => r.status === "pending").length;
 
-  const pendingLeave = await db.select().from(leaveApplicationsTable);
-  const pendingLeaveCount = user.role === "super_admin"
-    ? pendingLeave.filter((l) => l.status === "pending").length
-    : pendingLeave.filter((l) => l.status === "pending" && l.departmentId === user.departmentId).length;
-
-  const allComplaints = await db.select().from(complaintsTable);
-  const pendingComplaints = user.role === "super_admin"
-    ? allComplaints.filter((c) => c.status === "submitted" || c.status === "under_review").length
-    : allComplaints.filter((c) => (c.status === "submitted" || c.status === "under_review") && c.departmentId === user.departmentId).length;
-
-  const allRequests = await db.select().from(requestsTable);
-  const pendingRequests = user.role === "super_admin"
-    ? allRequests.filter((r) => r.status === "pending").length
-    : allRequests.filter((r) => r.status === "pending" && r.departmentId === user.departmentId).length;
-
-  const allTasks = await db.select().from(tasksTable);
   const openTasks = user.role === "employee"
     ? allTasks.filter((t) => t.assignedTo === user.id && t.status !== "done").length
     : allTasks.filter((t) => t.status !== "done").length;
 
-  const allPayroll = await db.select().from(payrollRecordsTable);
   const payrollDue = allPayroll.filter((p) => p.status === "draft").length;
 
   // Recent activity: last 10 audit-like entries from various tables
-  const recentLeaves = pendingLeave.slice(0, 3).map((l) => ({
+  const recentLeaves = onLeaveToday.slice(0, 3).map((l) => ({
     id: l.id,
     type: "leave",
     description: `Leave application submitted`,
@@ -70,8 +80,8 @@ router.get("/reports/dashboard", requireAuth, async (req, res): Promise<void> =>
     presentToday,
     onLeaveToday: onLeaveTodayCount,
     pendingLeaveRequests: pendingLeaveCount,
-    pendingComplaints,
-    pendingRequests,
+    pendingComplaints: pendingComplaintsCount,
+    pendingRequests: pendingRequestsCount,
     openTasks,
     payrollDue,
     recentActivity,

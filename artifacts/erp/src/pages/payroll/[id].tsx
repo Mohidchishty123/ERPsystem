@@ -26,8 +26,8 @@ export default function PayrollDetail() {
         queryClient.invalidateQueries({ queryKey: getGetPayrollQueryKey(payrollId) });
         queryClient.invalidateQueries({ queryKey: getListPayrollQueryKey() });
       },
-      onError: (error) => {
-        toast({ title: "Approval failed", description: error.data?.error, variant: "destructive" });
+      onError: (error: any) => {
+        toast({ title: "Approval failed", description: error.data?.error || "Unknown error", variant: "destructive" });
       }
     }
   });
@@ -101,7 +101,7 @@ export default function PayrollDetail() {
       <Card className="border-border shadow-lg">
         <CardHeader className="bg-muted/20 border-b border-border pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <CardTitle className="text-2xl text-primary font-mono tracking-tight uppercase">CoreHR</CardTitle>
+            <CardTitle className="text-2xl text-primary font-mono tracking-tight uppercase">Nextstac</CardTitle>
             <CardDescription>Payslip for {monthName} {record.year}</CardDescription>
           </div>
           <div className="text-right">

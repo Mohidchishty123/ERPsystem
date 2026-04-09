@@ -81,8 +81,6 @@ export default function EmployeeDetail() {
                 <h2 className="text-2xl font-bold">{user.fullName}</h2>
                 {user.employmentStatus === "active" ? (
                   <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">Active</Badge>
-                ) : user.employmentStatus === "invited" ? (
-                  <Badge variant="secondary">Invited</Badge>
                 ) : (
                   <Badge variant="destructive">Inactive</Badge>
                 )}

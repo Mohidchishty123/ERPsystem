@@ -31,7 +31,6 @@ export default function Employees() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active": return <Badge variant="default" className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20">Active</Badge>;
-      case "invited": return <Badge variant="secondary" className="bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border-blue-500/20">Invited</Badge>;
       case "inactive": return <Badge variant="destructive" className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20">Inactive</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }
