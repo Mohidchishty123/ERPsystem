@@ -48,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = (newToken: string) => {
     setToken(newToken);
+    setAuthTokenGetter(() => newToken);
   };
 
   const logout = async () => {
@@ -55,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiLogout();
     } catch (e) {}
     setToken(null);
+    setAuthTokenGetter(() => null);
     queryClient.clear();
     setLocation("/login");
   };

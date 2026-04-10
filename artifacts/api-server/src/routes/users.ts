@@ -1,7 +1,7 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { db, usersTable, departmentsTable, leaveBalancesTable } from "@workspace/db";
-import { eq, ilike, sql, and, neq } from "drizzle-orm";
+import { eq, ilike, sql, and, ne } from "drizzle-orm";
 import { CreateUserBody, UpdateUserBody } from "@workspace/api-zod";
 import { requireAuth, requireRole } from "../lib/auth";
 import { logger } from "../lib/logger";
@@ -83,7 +83,7 @@ router.get("/users", requireAuth, async (req, res): Promise<void> => {
 
   // Department filtering and admin scope
   if (user.role === "admin") {
-    conditions.push(neq(usersTable.role, "super_admin"));
+    conditions.push(ne(usersTable.role, "super_admin"));
     if (user.departmentId) {
       conditions.push(eq(usersTable.departmentId, user.departmentId));
     }
