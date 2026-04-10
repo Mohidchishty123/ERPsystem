@@ -81,14 +81,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <SidebarGroupLabel className="text-muted-foreground text-xs uppercase font-mono tracking-wider">People</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={location === "/employees"}>
-                      <Link href="/employees">
-                        <Users className="h-4 w-4 mr-2" />
-                        <span>Employees</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {isAdmin() && (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={location === "/employees"}>
+                        <Link href="/employees">
+                          <Users className="h-4 w-4 mr-2" />
+                          <span>Employees</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
                   {isAdmin() && (
                     <SidebarMenuItem>
                       <SidebarMenuButton asChild isActive={location === "/departments"}>

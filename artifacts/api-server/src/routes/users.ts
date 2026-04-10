@@ -1,7 +1,7 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { db, usersTable, departmentsTable, leaveBalancesTable } from "@workspace/db";
-import { eq, ilike, sql, and } from "drizzle-orm";
+import { eq, ilike, sql, and, neq } from "drizzle-orm";
 import { CreateUserBody, UpdateUserBody } from "@workspace/api-zod";
 import { requireAuth, requireRole } from "../lib/auth";
 import { logger } from "../lib/logger";
@@ -81,9 +81,12 @@ router.get("/users", requireAuth, async (req, res): Promise<void> => {
   if (status) conditions.push(eq(usersTable.employmentStatus, status));
   if (search) conditions.push(ilike(usersTable.fullName, `%${search}%`));
 
-  // Department filtering
-  if (user.role === "admin" && user.departmentId) {
-    conditions.push(eq(usersTable.departmentId, user.departmentId));
+  // Department filtering and admin scope
+  if (user.role === "admin") {
+    conditions.push(neq(usersTable.role, "super_admin"));
+    if (user.departmentId) {
+      conditions.push(eq(usersTable.departmentId, user.departmentId));
+    }
   } else if (departmentId) {
     conditions.push(eq(usersTable.departmentId, parseInt(departmentId)));
   }
@@ -152,6 +155,7 @@ router.post("/users", requireAuth, requireRole("super_admin", "admin"), async (r
 });
 
 router.get("/users/:id", requireAuth, async (req, res): Promise<void> => {
+  const currentUser = req.user!;
   const raw = Array.isArray(req.params["id"]) ? req.params["id"][0] : req.params["id"];
   const id = parseInt(raw, 10);
   const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.id, id));
@@ -159,6 +163,12 @@ router.get("/users/:id", requireAuth, async (req, res): Promise<void> => {
     res.status(404).json({ error: "User not found" });
     return;
   }
+
+  if (currentUser.role === "admin" && foundUser.role === "super_admin") {
+    res.status(403).json({ error: "Forbidden: You cannot view super admin profiles" });
+    return;
+  }
+
   const formatted = await formatUser(foundUser);
   res.json(formatted);
 });

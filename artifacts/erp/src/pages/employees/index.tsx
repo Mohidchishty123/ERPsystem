@@ -13,7 +13,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Plus, Filter, Users, Building, Shield } from "lucide-react";
 
 export default function Employees() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin } = useAuth();
+
+  if (!isAdmin()) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-muted-foreground text-sm">Unauthorized</div>
+      </div>
+    );
+  }
+
   const [search, setSearch] = useState("");
   const [departmentId, setDepartmentId] = useState<number | null>(null);
   const [role, setRole] = useState<string | null>(null);
@@ -25,6 +34,8 @@ export default function Employees() {
     departmentId: departmentId || undefined,
     role: role || undefined
   });
+
+  const visibleUsers = users?.filter((user) => isSuperAdmin() || user.role !== "super_admin");
 
   const getInitials = (name: string) => name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 
@@ -173,7 +184,7 @@ export default function Employees() {
                 </div>
               ))}
             </div>
-          ) : users && users.length > 0 ? (
+          ) : visibleUsers && visibleUsers.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -186,7 +197,7 @@ export default function Employees() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((u) => (
+                {visibleUsers.map((u) => (
                   <TableRow key={u.id} className="group cursor-pointer hover:bg-muted/50 transition-colors">
                     <TableCell>
                       <div className="flex items-center gap-3">

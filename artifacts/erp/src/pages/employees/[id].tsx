@@ -52,7 +52,7 @@ export default function EmployeeDetail() {
     <div className="space-y-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-start">
         <h1 className="text-3xl font-bold tracking-tight">Employee Profile</h1>
-        {isAdmin() && user.employmentStatus !== "inactive" && (
+        {isAdmin() && user.employmentStatus !== "inactive" && user.role !== "super_admin" && (
           <Button 
             variant="destructive" 
             onClick={() => {
